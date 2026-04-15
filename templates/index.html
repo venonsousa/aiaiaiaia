@@ -1,1 +1,89 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unfollow System</title>
+    <style>
+        body { background:#111; color:#fff; font-family:Arial; text-align:center; }
+        input, button { padding:10px; margin:5px; }
+        .card { margin:20px; padding:20px; border:1px solid #333; }
+    </style>
+</head>
+<body>
+
+<h1>Unfollow System</h1>
+
+<div class="card">
+    <h3>Registro</h3>
+    <input id="reg_user" placeholder="username">
+    <input id="reg_pass" type="password" placeholder="password">
+    <button onclick="register()">Registrar</button>
+</div>
+
+<div class="card">
+    <h3>Login</h3>
+    <input id="log_user" placeholder="username">
+    <input id="log_pass" type="password" placeholder="password">
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+    <h3>Ferramentas</h3>
+    <button onclick="analyze()">Analisar</button>
+    <button onclick="unfollow()">Unfollow</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+async function register(){
+    await fetch('/register',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+            username:reg_user.value,
+            password:reg_pass.value
+        })
+    });
+    alert("Registrado");
+}
+
+async function login(){
+    let res = await fetch('/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+            username:log_user.value,
+            password:log_pass.value
+        })
+    });
+
+    let data = await res.json();
+    alert(JSON.stringify(data));
+}
+
+async function logout(){
+    await fetch('/logout');
+    alert("logout");
+}
+
+async function analyze(){
+    let res = await fetch('/analyze');
+    let data = await res.json();
+
+    result.innerHTML =
+        "Followers: "+data.followers+"<br>"+
+        "Following: "+data.following+"<br>"+
+        "Não seguem: "+data.not_following_back.length;
+}
+
+async function unfollow(){
+    let res = await fetch('/unfollow');
+    let data = await res.json();
+    alert(data.status);
+}
+</script>
+
+</body>
+</html>
